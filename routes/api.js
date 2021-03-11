@@ -32,7 +32,6 @@ var {
 	Nulis,
 	Vokal,
 	Base,
-	Github,
 	ig,
 	ytplay,
 	ytdldown,
