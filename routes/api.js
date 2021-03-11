@@ -364,7 +364,6 @@ router.get('/igs', async (req, res, next) => {
                       verified: verif_or,
                       business_account: bisnis_or,
                       post: `${data.graphql.user.edge_owner_to_timeline_media.count}`,
-                      profile_picture: `${data.graphql.user.profile_pic_url}`,
                       profile_picture_hd: `${data.graphql.user.profile_pic_url_hd}`,
                  },
                  message: `jangan lupa follow ${creator}`
