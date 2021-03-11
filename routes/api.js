@@ -872,9 +872,9 @@ router.get('/igstalk', async (req, res, next) => {
             
 	if(!apikeyInput) return res.json(loghandler.notparam)
 	if(apikeyInput != 'SrtBot') return res.json(loghandler.invalidKey)
-    if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter username"})
+    if (!username) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter username"})
 
-       fetch(encodeURI(`https://a.apimau.ga/igs?u=${url}`))
+       fetch(encodeURI(`https://a.apimau.ga/igs?u=${username}`))
         .then(response => response.json())
         .then(data => {
         var result = data;
