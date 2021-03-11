@@ -32,7 +32,7 @@ var {
 	Nulis,
 	Vokal,
 	Base,
-	ig,
+	IG,
 	ytplay,
 	ytdldown,
 	Searchnabi,
