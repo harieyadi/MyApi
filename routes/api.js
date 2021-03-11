@@ -30,7 +30,7 @@ var {
 	Nulis,
 	Vokal,
 	Base,
-	
+	IG,
 	Searchnabi,
     Gempa
 } = require('./../lib');
