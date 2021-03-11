@@ -22,6 +22,8 @@ var cheerio = require('cheerio');
 var request = require('request');
 var TikTokScraper = require('tiktok-scraper');
 var router  = express.Router();
+var YoutubeAPI = require('simple-youtube-api')
+var youtubs = new YoutubeAPI('BotSrt'); 
 
 var { color, bgcolor } = require(__path + '/lib/color.js');
 var { fetchJson } = require(__path + '/lib/fetcher.js')
@@ -30,6 +32,10 @@ var {
 	Nulis,
 	Vokal,
 	Base,
+	Github,
+	IG,
+	ytplay,
+	ytdldown,
 	Searchnabi,
     Gempa
 } = require('./../lib');
@@ -160,6 +166,148 @@ var len = 15
  	ap = await zahirr.findOne({apikey:api})
  return ap;
  }
+router.get('/yt/play', async (req, res, next) => {
+	var vid = [];
+	var q = req.query.query,
+		apikeyInput = req.query.apikey;
+
+	if (!apikeyInput) return res.json(loghandler.notparam)
+	a = await cekApiKey(apikeyInput)
+	if (a == null) return res.json(loghandler.invalidKey)
+	logPengguna(apikeyInput, a, 'Youtube')
+	if (!q) return res.json(loghandler.notquery)
+	var videos = []
+	ytplay(q).then(async (resplay) => {
+			var gasplay = resplay[0]
+			
+			ytdldown(gasplay,'multi')
+			.then(result => {
+				res.json({status:true,creator:creator,result})
+			})
+			.catch (e=>{
+				console.log('Error :', color(e,'red'))
+				res.json(loghandler.error)
+			})
+	})
+	.catch (e => {
+		console.log('Error : ', color(e,'red'))
+	})
+})
+router.get('/yt/search', async (req, res, next) => {
+	var search = req.query.q,
+	       apikeyInput = req.query.apikey;
+	
+	if (!apikeyInput) return res.json(loghandler.notparam)
+	a = await cekApiKey(apikeyInput) 
+	if (a == null) return res.json(loghandler.invalidKey)
+	logPengguna(apikeyInput,a,'Youtube')
+	if(!search) return res.json({status:false,creator:creator,message:'masukan parameter q'})
+	try {
+scrapeYt.search(search, {
+    type: "video"
+}).then(videos => {
+    res.json(videos);
+})
+} catch (err) {
+    console.log('Error :', color(err, 'red'))
+    res.json(loghandler.error)
+  }
+})
+router.get('/yt', async (req, res, next) => {
+	var url = req.query.url,
+		apikeyInput = req.query.apikey,
+		type = req.query.type;
+
+	if (!apikeyInput) return res.json(loghandler.notparam)
+	a = await cekApiKey(apikeyInput) 
+	if (a == null) return res.json(loghandler.invalidKey)
+	logPengguna(apikeyInput,a,'Youtube')
+	if (!url) return res.json(loghandler.noturl)
+	let playlistregex = /\/playlist\?list=/;
+	let result = []
+	try {
+		if (playlistregex.test(url)){
+			ytpl(url)
+			.then(info => info.items)
+			.then(info => {
+				let video
+				for(video of info){
+					result.push({
+						title: video.title,
+						id: video.id,
+						duration: video.duration
+					})
+				}
+				res.json({
+					status:true,
+					creator: creator,
+					result,
+					message: 'jangan lupa follow ' + creator
+				})
+			})
+			.catch(e => {
+				console.log(e)
+				res.json(loghandler.error)
+			})
+		} else {
+			ytdl.getInfo(url)
+			.then(info => {
+				let duration = (info.lengthSeconds/60).toString()
+				duration = duration.substring(0, duration.indexOf('.'))+':'+Math.floor((info.lengthSeconds%60).toString())
+				const max = info.videoDetails.thumbnails.reduce((prev, current) => ((prev.height > current.height) ? prev : current));
+					result.push({
+						    id: info.videoDetails.videoId,
+                            title: info.videoDetails.title,
+                            description: info.videoDetails.description,
+                            length: info.videoDetails.lengthSeconds,
+                            view: info.videoDetails.viewCount,
+                            date: info.videoDetails.publishDate,
+                            thumbnail: max,
+                            video:info.formats
+                })
+                res.json({
+				status:true,
+				creator: creator,
+                result,
+                message: 'jangan lupa follow ' + creator
+                })
+			})
+			.catch (er => {
+				console.log(er)
+				res.json(loghandler.error)
+				})
+				}
+				} catch (e) {
+					console.log(e)
+					res.json(loghandler.error)
+					} 
+	if (url && type == 'audio') {
+		try {
+    res.header('Content-Disposition', `attachment; filename="audio-zefian.mp3"`);
+    ytdl(url, {
+      format: 'mp3',
+      filter: 'audioonly',
+      filter: 'audioonly'
+      }).pipe(res);
+
+  } catch (err) {
+    res.json(loghandler.error)
+    console.log(loghandler.error)
+  }
+		} else if (url && type == 'video'){
+			try {
+    res.header('Content-Disposition', `attachment; filename="video-zefian.mp4"`);
+    ytdl(url, {
+      format: 'mp4',
+    }).pipe(res);
+
+  } catch (err) {
+    res.json(loghandler.error)
+    console.log(loghandler.error)
+  }
+  } 
+})
+
 router.get('/find', async (req, res, next) => {
     var apikey = req.query.apikey
     if (!apikey) return res.json(loghandler.notparam)
