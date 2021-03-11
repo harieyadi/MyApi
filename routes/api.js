@@ -339,57 +339,38 @@ router.get('/tiktod/stalk', async (req, res, next) => {
          })
 })
 
-router.get('/igdown', async (req, res, next) => {
+router.get('/igs', async (req, res, next) => {
     var apikeyInput = req.query.apikey,
-        url = req.query.url
+        username = req.query.username
 
-    if(!apikeyInput) return res.json(loghandler.notparam)
-    if(apikeyInput != 'SrtBot') return res.json(loghandler.invalidKey)
-    if (!url) return res.json(loghandler.noturl)
+	if(!apikeyInput) return res.json(loghandler.notparam)
+	if(apikeyInput != 'SrtBot') return res.json(loghandler.invalidKey)
+	if (!username) return res.json(loghandler.notusername)
 
-    var str = url
-    var potong = str.split('?')
-    var graph = "?__a=1"
-    var potong2 = potong[0] + graph
-
-    fetch(encodeURI(potong2))
+    fetch(encodeURI(`https://www.instagram.com/${username}/?__a=1`))
         .then(response => response.json())
         .then(data => {
-            var validasi = data["graphql"]["shortcode_media"]["__typename"];
-            if (validasi == "GraphVideo") {
-                var link = data.graphql.shortcode_media.video_url;
-                res.json({
-                    status: true,
-                    creator: `${creator}`,
-                    result: {
-                        type: "Video",
-                        url: link
-                    },
-                    message: "jangan lupa follow" + creator
-                })
-            } else if (validasi == "GraphImage") {
-                var link = data.graphql.shortcode_media.display_url;
-                res.json({
-                    status: true,
-                    creator: `${creator}`,
-                    result: {
-                        type: "Picture",
-                        url: link
-                    },
-                    message: "jangan lupa follow" + creator
-                })
-            } else {
-                res.json({
-                    status: false,
-                    creator: `${creator}`,
-                    message: "mungkin terjadi error"
-                })
-            }
+             var bisnis_or = data.graphql.user.is_business_account == false ? "bukan bisnis": "ini bisnis"
+             var verif_or =  data.graphql.user.is_verified == false ? "belum verified / centang biru": "sudah verified / centang biru"
+             var response = {
+                 status: true,
+                 creator: `${creator}`,
+                 result: {
+                      username: `${data.graphql.user.username}`,
+                      name: `${data.graphql.user.full_name}`,
+                      biodata: `${data.graphql.user.biography}`,
+                      followers: `${data.graphql.user.edge_followed_by.count}`,
+                      following:`${data.graphql.user.edge_follow.count}`,
+                      verified: verif_or,
+                      business_account: bisnis_or,
+                      post: `${data.graphql.user.edge_owner_to_timeline_media.count}`,
+                      profile_picture: `${data.graphql.user.profile_pic_url}`,
+                      profile_picture_hd: `${data.graphql.user.profile_pic_url_hd}`,
+                 },
+                 message: `jangan lupa follow ${creator}`
+             }
+             res.json(response)
         })
-        .catch(e => {
-            console.log('Error:', color(e,'red'))
-            res.json({status:false,creator: `${creator}`, message: "gagal, pastikan url anda benar:)"})
-       })
 })
 
 router.get('/randomquote', async (req, res, next) => {
