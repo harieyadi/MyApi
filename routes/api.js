@@ -33,7 +33,7 @@ var {
 	Vokal,
 	Base,
 	Github,
-	IG,
+	ig,
 	ytplay,
 	ytdldown,
 	Searchnabi,
