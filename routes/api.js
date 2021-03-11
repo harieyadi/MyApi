@@ -22,8 +22,6 @@ var cheerio = require('cheerio');
 var request = require('request');
 var TikTokScraper = require('tiktok-scraper');
 var router  = express.Router();
-var YoutubeAPI = require('simple-youtube-api')
-var youtubs = new YoutubeAPI('BotSrt'); 
 
 var { color, bgcolor } = require(__path + '/lib/color.js');
 var { fetchJson } = require(__path + '/lib/fetcher.js')
@@ -32,9 +30,6 @@ var {
 	Nulis,
 	Vokal,
 	Base,
-	IG,
-	ytplay,
-	ytdldown,
 	Searchnabi,
     Gempa
 } = require('./../lib');
