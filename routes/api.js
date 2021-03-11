@@ -866,13 +866,13 @@ router.get('/fbdown', async (req, res, next) => {
 })
 })
 
-router.get('/igstalk async (req, res, next) => {
+router.get('/igstalk', async (req, res, next) => {
         var apikeyInput = req.query.apikey,
             username = req.query.username
             
 	if(!apikeyInput) return res.json(loghandler.notparam)
-	if(apikeyInput != 'zahirgans') return res.json(loghandler.invalidKey)
-    if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter url"})
+	if(apikeyInput != 'SrtBot') return res.json(loghandler.invalidKey)
+    if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter username"})
 
        fetch(encodeURI(`https://a.apimau.ga/igs?u=${url}`))
         .then(response => response.json())
