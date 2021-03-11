@@ -866,6 +866,28 @@ router.get('/fbdown', async (req, res, next) => {
 })
 })
 
+router.get('/igstalk async (req, res, next) => {
+        var apikeyInput = req.query.apikey,
+            username = req.query.username
+            
+	if(!apikeyInput) return res.json(loghandler.notparam)
+	if(apikeyInput != 'zahirgans') return res.json(loghandler.invalidKey)
+    if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter url"})
+
+       fetch(encodeURI(`https://a.apimau.ga/igs?u=${url}`))
+        .then(response => response.json())
+        .then(data => {
+        var result = data;
+             res.json({
+                 result
+             })
+         })
+         .catch(e => {
+         	res.json(loghandler.error)
+})
+})
+
+
 
 router.get('/textmaker/metallic', async (req, res, next) => {
         var theme = req.query.theme,
