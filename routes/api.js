@@ -339,37 +339,25 @@ router.get('/tiktod/stalk', async (req, res, next) => {
          })
 })
 
-router.get('/igs', async (req, res, next) => {
-    var apikeyInput = req.query.apikey,
-        username = req.query.username
-
+router.get('/igdown', async (req, res, next) => {
+        var apikeyInput = req.query.apikey,
+            url = req.query.url
+            
 	if(!apikeyInput) return res.json(loghandler.notparam)
 	if(apikeyInput != 'SrtBot') return res.json(loghandler.invalidKey)
-	if (!username) return res.json(loghandler.notusername)
+    if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter url"})
 
-    fetch(encodeURI(`https://www.instagram.com/${username}/?__a=1`))
+       fetch(encodeURI(`https://api.zeks.xyz/api/ig?url=${url}&apikey=apivinz`))
         .then(response => response.json())
         .then(data => {
-             var bisnis_or = data.graphql.user.is_business_account == false ? "bukan bisnis": "ini bisnis"
-             var verif_or =  data.graphql.user.is_verified == false ? "belum verified / centang biru": "sudah verified / centang biru"
-             var response = {
-                 status: true,
-                 creator: `${creator}`,
-                 result: {
-                      username: `${data.graphql.user.username}`,
-                      name: `${data.graphql.user.full_name}`,
-                      biodata: `${data.graphql.user.biography}`,
-                      followers: `${data.graphql.user.edge_followed_by.count}`,
-                      following:`${data.graphql.user.edge_follow.count}`,
-                      verified: verif_or,
-                      business_account: bisnis_or,
-                      post: `${data.graphql.user.edge_owner_to_timeline_media.count}`,
-                      profile_picture_hd: `${data.graphql.user.profile_pic_url_hd}`,
-                 },
-                 message: `jangan lupa follow ${creator}`
-             }
-             res.json(response)
-        })
+        var result = data;
+             res.json({
+                 result
+             })
+         })
+         .catch(e => {
+         	res.json(loghandler.error)
+})
 })
 
 router.get('/randomquote', async (req, res, next) => {
