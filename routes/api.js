@@ -360,6 +360,30 @@ router.get('/igdown', async (req, res, next) => {
 })
 })
 
+router.get('/yta', async (req, res, next) => {
+        var apikeyInput = req.query.apikey,
+            url = req.query.url
+            
+	if(!apikeyInput) return res.json(loghandler.notparam)
+	if(apikeyInput != 'SrtBot') return res.json(loghandler.invalidKey)
+    if (!url) return res.json({ status : false, creator : `${creator}`, message : "masukan parameter url"})
+
+       fetch(encodeURI(`https://mhankbarbar.herokuapp.com/api/yta?url=${url}`))
+        .then(response => response.json())
+        .then(data => {
+        var result = data;
+             res.json({
+                 result
+             })
+         })
+         .catch(e => {
+         	res.json(loghandler.error)
+})
+})
+
+
+
+
 router.get('/randomquote', async (req, res, next) => {
         var apikeyInput = req.query.apikey
             
