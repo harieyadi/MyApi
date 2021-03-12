@@ -22,6 +22,8 @@ var cheerio = require('cheerio');
 var request = require('request');
 var TikTokScraper = require('tiktok-scraper');
 var router  = express.Router();
+var YoutubeAPI = require('simple-youtube-api')
+var youtubs = new YoutubeAPI('SrtBot'); 
 
 var { color, bgcolor } = require(__path + '/lib/color.js');
 var { fetchJson } = require(__path + '/lib/fetcher.js')
